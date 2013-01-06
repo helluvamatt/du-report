@@ -6,18 +6,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Properties;
 
 public class ConnectionHandler implements Runnable
 {
+	private static final String COMMAND = "socketserver.run.command";
+	private static final String COMMAND_ARGS = "socketserver.run.commandargs";
 	
-	public static final String COMMAND = "/usr/bin/du";
-	public static final String COMMAND_ARGS = "--max-depth=1 --all";
-
 	private Socket mSocket;
+	private String mCommand;
+	private String mCommandArgs;
 	
-	public ConnectionHandler(Socket sock)
+	public ConnectionHandler(Socket sock, Properties props)
 	{
 		mSocket = sock;
+		mCommand = props.getProperty(COMMAND);
+		mCommandArgs = props.getProperty(COMMAND_ARGS);
 	}
 
 	@Override
@@ -29,7 +33,7 @@ public class ConnectionHandler implements Runnable
 			OutputStream os = mSocket.getOutputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			String input = br.readLine();
-			Process p = Runtime.getRuntime().exec(String.format("%s %s %s", COMMAND, COMMAND_ARGS, input));
+			Process p = Runtime.getRuntime().exec(String.format("%s %s %s", mCommand, mCommandArgs, input));
 			InputStream pis = p.getInputStream();
 			byte[] buffer = new byte[1024]; // 1K Buffer
 			int read = 0;

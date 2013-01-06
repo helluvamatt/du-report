@@ -1,7 +1,7 @@
 package com.schneenet.dureport.server;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -14,53 +14,48 @@ import java.util.concurrent.Executors;
 public class SocketServer
 {
 	
+	private Properties mProperties;
 	private boolean running = true;
-	
-	private SocketServer(Properties props)
+
+	public static final String PROPERTIES_FILE = "server.properties";
+
+	public SocketServer()
 	{
-		try
-		{
-			ExecutorService execService = Executors.newCachedThreadPool();			
+		try {
+			// Read config
+			InputStream pfStream = getClass().getResourceAsStream(PROPERTIES_FILE);
+			InputStreamReader pfReader = new InputStreamReader(pfStream, Charset.forName("UTF-8"));
+			mProperties = new Properties();
+			mProperties.load(pfReader);
+			
+			// Create cached thread pool, creates threads as needed and reuses cached threads.
+			ExecutorService execService = Executors.newCachedThreadPool();
 			ServerSocket serverSocket = new ServerSocket();
 			InetSocketAddress addr = new InetSocketAddress(7000);
 			serverSocket.bind(addr);
 			while (running)
 			{
 				Socket s = serverSocket.accept();
-				execService.execute(new ConnectionHandler(s));
+				execService.execute(new ConnectionHandler(s, copyProps(mProperties)));
 			}
 		}
 		catch (IOException e)
 		{
+			// TODO Proper logging for socket-server
 			e.printStackTrace(System.err);
 		}
 	}
-
+	
 	/**
-	 * Server program entry point
-	 * 
-	 * @param args
-	 *            Command line arguments
+	 * Create a deep copy of a Properties
+	 * @param source Properties to copy from
+	 * @return Deep copy of source
 	 */
-	public static void main(String[] args)
+	private static Properties copyProps(Properties source)
 	{
-		try
-		{
-			// Read config
-			FileInputStream pfStream = new FileInputStream("server.properties");
-			InputStreamReader pfReader = new InputStreamReader(pfStream, Charset.forName("UTF-8"));
-			Properties props = new Properties();
-			props.load(pfReader);
-
-			// Start server
-			//SocketServer ss = 
-			new SocketServer(props);
-		}
-		catch (IOException ex)
-		{
-			ex.printStackTrace(System.err);
-		}
-
+		Properties copy = (Properties) source.clone();
+		copy.putAll(source);
+		return copy;
 	}
 
 }
