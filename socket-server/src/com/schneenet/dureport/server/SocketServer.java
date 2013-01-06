@@ -19,6 +19,8 @@ public class SocketServer
 
 	public static final String PROPERTIES_FILE = "server.properties";
 
+	public static final String SERVER_PORT = "socketserver.port";
+	
 	public SocketServer()
 	{
 		try {
@@ -31,7 +33,8 @@ public class SocketServer
 			// Create cached thread pool, creates threads as needed and reuses cached threads.
 			ExecutorService execService = Executors.newCachedThreadPool();
 			ServerSocket serverSocket = new ServerSocket();
-			InetSocketAddress addr = new InetSocketAddress(7000);
+			int port = Integer.parseInt(mProperties.getProperty(SERVER_PORT));
+			InetSocketAddress addr = new InetSocketAddress(port);
 			serverSocket.bind(addr);
 			while (running)
 			{
