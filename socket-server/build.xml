@@ -26,7 +26,11 @@
 		<mkdir dir="${dist}" />
 
 		<!-- Put everything in ${bin} into the socket-server.jar file -->
-		<jar jarfile="${dist}/lib/socket-server.jar" basedir="${bin}" />
+		<jar jarfile="${dist}/lib/socket-server.jar" basedir="${bin}">
+			<manifest>
+				<attribute name="Main-Class" value="com.schneenet.dureport.server.SocketServerBootstrap" />
+			</manifest>
+		</jar>
 	</target>
 
 	<target name="clean" description="clean up">
