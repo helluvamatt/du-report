@@ -1,6 +1,7 @@
 
 # Ignore build directory (working directory of application builds)
 build/
+bin/
 
 # Compiled Object files
 *.slo
@@ -26,4 +27,9 @@ build/
 *.exe
 *.out
 *.app
+*.class
 
+# Package Files #
+*.jar
+*.war
+*.ear
