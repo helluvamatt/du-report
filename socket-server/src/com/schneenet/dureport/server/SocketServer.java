@@ -39,12 +39,14 @@ public class SocketServer
 			while (running)
 			{
 				Socket s = serverSocket.accept();
+				log("INFO", String.format("Connection accepted: %s", s.getInetAddress().getHostAddress()));
 				execService.execute(new ConnectionHandler(s, copyProps(mProperties)));
 			}
 		}
 		catch (IOException e)
 		{
 			// TODO Proper logging for socket-server
+			log("ERROR", e.getLocalizedMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -59,6 +61,11 @@ public class SocketServer
 		Properties copy = (Properties) source.clone();
 		copy.putAll(source);
 		return copy;
+	}
+	
+	private static void log(String level, String message)
+	{
+		System.out.println(String.format("[%s] %s", level, message));
 	}
 
 }

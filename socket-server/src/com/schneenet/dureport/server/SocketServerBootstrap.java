@@ -1,5 +1,6 @@
 package com.schneenet.dureport.server;
 
+
 public class SocketServerBootstrap
 {
 	/**
@@ -10,6 +11,9 @@ public class SocketServerBootstrap
 	 */
 	public static void main(String[] args)
 	{
+		// #0000002 Print something on start up
+		System.out.println("[INFO] Starting SocketServer...");
+		
 		// Create the socket server
 		new SocketServer();
 	}
