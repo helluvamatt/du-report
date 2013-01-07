@@ -63,7 +63,7 @@ public class SocketServer
 		return copy;
 	}
 	
-	private static void log(String level, String message)
+	public static void log(String level, String message)
 	{
 		System.out.println(String.format("[%s] %s", level, message));
 	}

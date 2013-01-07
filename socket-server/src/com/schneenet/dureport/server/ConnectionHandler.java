@@ -33,14 +33,16 @@ public class ConnectionHandler implements Runnable
 			OutputStream os = mSocket.getOutputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			String input = br.readLine();
+			SocketServer.log("DEBUG", "Got input: [" + input + "]");
 			String cmd = String.format("%s %s %s", mCommand, mCommandArgs, input);
+			SocketServer.log("DEBUG", "Executing: [" + cmd + "]");
 			Process p = Runtime.getRuntime().exec(cmd);
 			InputStream errStream = p.getErrorStream();
 			BufferedReader errorBr = new BufferedReader(new InputStreamReader(errStream));
 			String error;
 			while ((error = errorBr.readLine()) != null)
 			{
-				System.err.println("[ERROR] " + error);
+				SocketServer.log("ERROR", error);
 			}
 			InputStream pis = p.getInputStream();
 			byte[] buffer = new byte[1024]; // 1K Buffer
@@ -48,7 +50,9 @@ public class ConnectionHandler implements Runnable
 			while ((read = pis.read(buffer)) > -1)
 			{
 				os.write(buffer, 0, read - 1);
+				os.flush();
 			}
+			os.flush();
 			mSocket.close();
 		}
 		catch (IOException e)
